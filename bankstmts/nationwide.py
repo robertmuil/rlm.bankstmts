@@ -44,7 +44,7 @@ def read_tx_files(fpath_pattern):
         ))
     return df
 
-def read_tx_accounts():
+def read_tx_accounts(fpath_patterns):
     df_list = []
     for acct,fpath_pattern in fpath_patterns.items():
         df = read_tx_files(fpath_pattern)
