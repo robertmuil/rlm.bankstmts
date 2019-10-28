@@ -1,8 +1,10 @@
 import pandas as pd
 import warnings
 import glob
-
+import logging
 gumpf_rows = 4
+
+log = logging.getLogger(__name__)
 
 
 def read_tx_file(fpath):
@@ -10,13 +12,13 @@ def read_tx_file(fpath):
                      infer_datetime_format=True,
                      parse_dates=[0],
                      skiprows=gumpf_rows,
-                     encoding='latin1')\
+                     encoding='latin1')
     df.rename(columns={
         'Paid out': 'out_str',
         'Paid in': 'in_str',
         'Balance': 'balance_str',
     }, inplace=True)
-    print('read {:d} transactions from \'{}\''.format(len(df), fpath))
+    log.info('    - read {:d} transactions from \'{}\''.format(len(df), fpath))
     for c in ['out', 'in', 'balance']:
         df[c] = df[c + '_str'].str.replace(r'[^-+\d.]', '').astype(float)  # decimal.Decimal)
 
@@ -32,13 +34,15 @@ def read_tx_files(fpath_pattern):
         df_list += [df]
 
     if len(df_list) < 1:
-        warnings.warn('no files found with pattern \'{}\''.format(fpath_pattern))
+        warn_str = 'no files found with pattern \'{}\''.format(fpath_pattern)
+        warnings.warn(warn_str)
+        log.warning(warn_str)
         df = None
     else:
         df = pd.concat(df_list).sort_values('Date')
         cols_subset = set(df.columns).difference({'fpath'})
         df = df[~df.duplicated(subset=cols_subset)]
-        print('read {:d} unique transactions from {:d} files: from {} to {}'.format(
+        log.info(' |-> read {:d} unique transactions from {:d} files: from {} to {}'.format(
             len(df),
             len(df_list),
             df.Date.min(),
@@ -57,7 +61,7 @@ def read_tx_accounts(fpath_patterns):
 
     if len(df_list) > 0:
         df = pd.concat(df_list).sort_values('Date')
-        print('read {:d} transactions from {:d} accounts: from {} to {}'.format(
+        log.info('=> read {:d} transactions from {:d} accounts: from {} to {}'.format(
             len(df),
             len(df_list),
             df.Date.min(),
