@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import logging
 gumpf_rows = 4
 
@@ -25,7 +26,7 @@ def read_tx_file(fpath):
     log.info('    - read {:d} transactions from \'{}\''.format(len(df), fpath))
     for c in ['out', 'in', 'balance']:
         if df[c + '_str'].isnull().all():
-            df[c] = pd.np.nan
+            df[c] = np.nan
         else:
             df[c] = df[c + '_str'].str.replace(r'[^-+\d.]', '').astype(float)  # decimal.Decimal)
 
