@@ -40,6 +40,10 @@ def read_tx_files(fpath_pattern, tx_file_reader: Callable[[str], pd.DataFrame]):
             df.Date.min(),
             df.Date.max()
         ))
+    ix_duplicates = df.duplicated(['Date', 'Transaction type', 'Description', 'out', 'in'])
+    log.info(f'   - dropping {ix_duplicates.sum()} duplicate records')
+    df = df[~ix_duplicates].copy()
+
     return df
 
 
