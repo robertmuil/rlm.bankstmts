@@ -1,2 +1,3 @@
-# bankstmts
-Read bank statements into Pandas DataFrames in Python.
+OBSOLETE
+
+functionality moved to https://github.com/robertmuil/whatthefinance
